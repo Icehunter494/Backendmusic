@@ -5,6 +5,8 @@ import shutil
 from audio import load_wav
 from pitch import analyze_audio
 
+app = FastAPI
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
