@@ -2,13 +2,14 @@ import wave
 import struct
 
 def load_wav(filename):
-
     with wave.open(filename, 'rb') as w:
-        n_frames = w.getnframes()
-        sample_rate = w.getframerate()
+        frames = w.readframes(w.getnframes())
 
-        raw = w.readframes(n_frames)
+        samples = struct.unpack(
+            "<" + str(w.getnframes()) + "h",
+            frames
+        )
 
-        samples = struct.unpack("<" + str(n_frames) + "h", raw)
+        sr = w.getframerate()
 
-        return samples, sample_rate
+        return samples, sr
