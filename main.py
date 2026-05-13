@@ -2,23 +2,31 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 import shutil
 
-app = FastAPI()
+from audio import load_wav
+from pitch import analyze_audio
+
+app = FastAPI
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://project-zruh1.vercel.appapp"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-@app.get("/")
-def home():
-    return {"status": "ok"}
+app = FastAPI()
 
 @app.post("/transcribe")
 async def transcribe(file: UploadFile = File(...)):
-    with open("temp.wav", "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    path = f"temp_{file.filename}"
 
-    return {"message": "file received"}
+    with open(path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    samples, sr = load_wav(path)
+    result = analyze_audio(samples, sr)
+
+    return {"notes": result}
