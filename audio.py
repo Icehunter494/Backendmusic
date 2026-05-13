@@ -1,5 +1,5 @@
 import wave
-import numpy as np
+import struct
 
 def load_wav(filename):
     with wave.open(filename, 'rb') as w:
@@ -8,11 +8,15 @@ def load_wav(filename):
         sr = w.getframerate()
         channels = w.getnchannels()
 
-        # convert to int16 safely
-        audio = np.frombuffer(frames, dtype=np.int16)
+        # correct format string
+        fmt = "<" + str(w.getnframes() * channels) + "h"
+        samples = struct.unpack(fmt, frames)
 
-        # convert stereo → mono if needed
+        # convert stereo → mono
         if channels == 2:
-            audio = audio.reshape(-1, 2).mean(axis=1).astype(np.int16)
+            samples = [
+                (samples[i] + samples[i+1]) // 2
+                for i in range(0, len(samples), 2)
+            ]
 
-        return audio, sr
+        return samples, sr
