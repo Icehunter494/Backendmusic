@@ -19,6 +19,10 @@ app.add_middleware(
 
 @app.post("/transcribe")
 async def transcribe(file: UploadFile = File(...)):
+
+    if not file.filename.endswith(".wav"):
+        return {"error": "Please upload a WAV file"}
+    
     path = f"temp_{file.filename}"
 
     with open(path, "wb") as buffer:
