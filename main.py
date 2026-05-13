@@ -1,9 +1,14 @@
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+import shutil
+
+from audio import load_wav
+from pitch import analyze_audio
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://your-vercel-app.vercel.app"
+        "https://project-zruh1.vercel.appapp"
     ],
     allow_credentials=True,
     allow_methods=["*"],
